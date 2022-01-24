@@ -1,0 +1,14 @@
+#gameboard {
+    display: flex;
+}
+
+.board-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.grid {
+    border: 1.5px solid black;
+    width: 80px;
+    height: 80px;
+}

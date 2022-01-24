@@ -1,0 +1,6 @@
+1. Create a simple HTML page
+    a. a page that consists of a div with 9 boxes.
+    b. in those boxes, whenever it is clicked, it is assigned 'x' or 'o'
+2. Try to make the game work
+3. Expand the HTML page
+4. Finish it off with the styling
