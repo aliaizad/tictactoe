@@ -11,4 +11,8 @@
     border: 1.5px solid black;
     width: 80px;
     height: 80px;
+    text-align: center;
+    line-height: 80px;
+    vertical-align: middle;
+    font-size: 40px;
 }
