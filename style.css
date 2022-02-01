@@ -16,3 +16,15 @@
     vertical-align: middle;
     font-size: 40px;
 }
+
+.open {
+    display: block;
+}
+
+.close {
+    display: none;
+}
+
+#player-list {
+    white-space: pre;
+}
