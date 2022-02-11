@@ -36,10 +36,12 @@ const gameFlow = (function () {
     //create a function that player will choose a symbol and the two players will be created, based on the chosen symbol.
     let playerArray = [];
     let turn = undefined;
+    let winner = undefined;
     const _selectSymbol = (function () {
         const symbols = document.querySelectorAll('.gamebuts');
         const selectQuery = document.getElementById('player-choice');
         const playerList = document.getElementById('player-list');
+        const resetDiv = document.getElementById('reset');
 
         symbols.forEach ((symbol) => {
             symbol.addEventListener('click', setSymbol);
@@ -66,6 +68,7 @@ const gameFlow = (function () {
 
             playerList.textContent = `Player 1: ${player1.symbol}\nPlayer 2: ${player2.symbol}`;
             playerList.classList.remove('close');
+            resetDiv.classList.remove('close');
         }   
     })();
 
@@ -78,7 +81,7 @@ const gameFlow = (function () {
 
         function writeSymbol (e) {
             //a function to write the symbol of the player of the current turn.
-           if (!e.target.textContent) {
+           if (!e.target.textContent && !winner) {
             if (turn !== undefined) {
                 if (turn.playerNum === 1) {
                     e.target.textContent = playerArray[0].symbol;
@@ -102,8 +105,7 @@ const gameFlow = (function () {
         const gridTexts = Array.from(document.querySelectorAll('.grid'))
         gridTexts.forEach ((element) => {
             gameStatus.push(element.innerText);
-        })
-        console.log(gameStatus);
+        });
         return gameStatus;
     }
 
@@ -112,13 +114,37 @@ const gameFlow = (function () {
         gameArray = _getStatus();
         winCombinations = [[0,3,6],[0,4,8],[0,1,2],[3,4,5],[2,4,6],[6,7,8],[1,4,7],[2,5,8]];
         //and not empty
+        search:
         for (const combination of winCombinations) {
             //if the element at the index in the win combinations are all the same, you win the game
             if (gameArray[combination[0]] && gameArray[combination[1]] && gameArray[combination[2]]) {
-                console.log(gameArray[combination[0]])
+                if (gameArray[combination[0]] === gameArray[combination[1]] && gameArray[combination[1]] === gameArray[combination[2]]) {
+                    //check which player wins
+                    for (player of playerArray) {
+                        if (player.symbol === gameArray[combination[0]]) {
+                            winner = player;
+                            if (winner.playerNum === 1) {
+                                console.log("Player 1 is the winner!");
+                            } else {
+                                console.log("Player 2 is the winner!");
+                            }
+                            break search
+                        }
+                    }
+                }
             }
         }
+
+        if (!gameArray.includes('') && !winner) {
+            console.log("Draw")
+        }
     }
+
+    //a function to stop the game if someone wins
+    const _resetGame = function () {
+
+    }
+
 }) ();
 
 function Player (symbol, playerNum) {
