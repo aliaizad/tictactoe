@@ -37,11 +37,14 @@ const gameFlow = (function () {
     let playerArray = [];
     let turn = undefined;
     let winner = undefined;
+    const alertdiv = document.getElementById("alerts");
+    const playerList = document.getElementById('player-list');
+    const selectQuery = document.getElementById('player-choice');
+    const resetDiv = document.getElementById('reset');
+    const gameBoxes = Array.from(document.querySelectorAll('.grid'));
+
     const _selectSymbol = (function () {
         const symbols = document.querySelectorAll('.gamebuts');
-        const selectQuery = document.getElementById('player-choice');
-        const playerList = document.getElementById('player-list');
-        const resetDiv = document.getElementById('reset');
 
         symbols.forEach ((symbol) => {
             symbol.addEventListener('click', setSymbol);
@@ -51,6 +54,7 @@ const gameFlow = (function () {
         const player2 = Player('', 2);
     
         function setSymbol (e) {
+            alertdiv.classList.add('close');
             playerArray = [];
             if (e.target.innerText === 'X') {
                 player1.symbol = e.target.innerText;
@@ -73,7 +77,6 @@ const gameFlow = (function () {
     })();
 
     const _gridclick = (function () {
-        const gameBoxes = Array.from(document.querySelectorAll('.grid'));
 
         gameBoxes.forEach ((box) => {
             box.addEventListener('click', writeSymbol);
@@ -81,21 +84,20 @@ const gameFlow = (function () {
 
         function writeSymbol (e) {
             //a function to write the symbol of the player of the current turn.
-           if (!e.target.textContent && !winner) {
-            if (turn !== undefined) {
-                if (turn.playerNum === 1) {
-                    e.target.textContent = playerArray[0].symbol;
-                    turn = playerArray[1];
-                } else {
-                    e.target.textContent = playerArray[1].symbol;
-                    turn = playerArray[0];
+            if (!e.target.textContent && !winner && playerArray.length == 2) {
+                if (turn !== undefined) {
+                    if (turn.playerNum === 1) {
+                        e.target.textContent = playerArray[0].symbol;
+                        turn = playerArray[1];
+                    } else {
+                        e.target.textContent = playerArray[1].symbol;
+                        turn = playerArray[0];
+                    }
+                    _determineWinner();
                 }
-                _determineWinner();
+            } else {
+                alertdiv.classList.remove('close');
             }
-            else {
-                alert('Select a symbol!')
-            }
-           }
         }
     }) ();
 
@@ -114,6 +116,8 @@ const gameFlow = (function () {
         gameArray = _getStatus();
         winCombinations = [[0,3,6],[0,4,8],[0,1,2],[3,4,5],[2,4,6],[6,7,8],[1,4,7],[2,5,8]];
         //and not empty
+        let finishToken;
+        let resultText;
         search:
         for (const combination of winCombinations) {
             //if the element at the index in the win combinations are all the same, you win the game
@@ -124,9 +128,11 @@ const gameFlow = (function () {
                         if (player.symbol === gameArray[combination[0]]) {
                             winner = player;
                             if (winner.playerNum === 1) {
-                                console.log("Player 1 is the winner!");
+                                resultText = "Player 1 is the winner!";
+                                finishToken = 1;
                             } else {
-                                console.log("Player 2 is the winner!");
+                                resultText = "Player 2 is the winner!";
+                                finishToken = 1;
                             }
                             break search
                         }
@@ -136,15 +142,34 @@ const gameFlow = (function () {
         }
 
         if (!gameArray.includes('') && !winner) {
-            console.log("Draw")
+            resultText = "Draw";
+            finishToken = 1;
+        }
+
+        if (finishToken) {
+            playerList.classList.add('close');
+            alertdiv.textContent = resultText;
+            alertdiv.classList.remove('close');
         }
     }
 
     //a function to stop the game if someone wins
-    const _resetGame = function () {
+    const _resetGame = (function () {
+        const resetbutton = document.getElementById('reset-button');
+        resetbutton.addEventListener('click', reset);
 
-    }
-
+        function reset () {
+            console.log(playerArray);
+            playerArray = [];
+            selectQuery.classList.remove('close');
+            playerList.classList.add('close');
+            resetDiv.classList.add('close');
+            alertdiv.classList.add('close');
+            finishToken = 0;
+            winner = undefined;
+            gameBoxes.forEach((box) => box.textContent = "");
+        }
+    }) ();
 }) ();
 
 function Player (symbol, playerNum) {
