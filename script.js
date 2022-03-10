@@ -42,16 +42,40 @@ const gameFlow = (function () {
     const selectQuery = document.getElementById('player-choice');
     const resetDiv = document.getElementById('reset');
     const gameBoxes = Array.from(document.querySelectorAll('.grid'));
+    const form = document.querySelector('form');
+    const turnAlert = document.createElement('div');
 
-    const _selectSymbol = (function () {
+    const _createPlayers = (function () {
+        const p1Name = document.getElementById('player1');
+        const p2Name = document.getElementById('player2');
+
+        const player1 = Player('', '', 1);
+        const player2 = Player('', '', 2);
+
+        form.addEventListener('submit', submitForm);
+
+        const choiceText = document.getElementById('choice-text');
+
+        function submitForm(e) {
+            e.preventDefault();
+            if(p1Name.value && p2Name.value) {
+                player1.name = p1Name.value;
+                player2.name = p2Name.value;
+                form.classList.add('close');
+                choiceText.textContent = `${player1.name}, please choose a symbol:`
+                selectQuery.classList.remove('close');
+            } else {
+                alertdiv.textContent = 'Please insert both names!'
+                alertdiv.classList.remove('close');
+            }
+            form.reset();
+        }
+
         const symbols = document.querySelectorAll('.gamebuts');
 
         symbols.forEach ((symbol) => {
             symbol.addEventListener('click', setSymbol);
         })
-
-        const player1 = Player('', 1);
-        const player2 = Player('', 2);
     
         function setSymbol (e) {
             alertdiv.classList.add('close');
@@ -67,10 +91,13 @@ const gameFlow = (function () {
             // create a function that change the divs text content when it is clicked depending on the player's symbol, create a function that chooses at random which player goes first.
             turn = playerArray[Math.floor(Math.random()*playerArray.length)];
 
+            turnAlert.textContent = `It is ${turn.name}'s turn`;
+
             selectQuery.classList.remove('open');
             selectQuery.classList.add('close');
 
-            playerList.textContent = `Player 1: ${player1.symbol}\nPlayer 2: ${player2.symbol}`;
+            playerList.textContent = `${player1.name}: ${player1.symbol}\n${player2.name}: ${player2.symbol}`;
+            playerList.appendChild(turnAlert);
             playerList.classList.remove('close');
             resetDiv.classList.remove('close');
         }   
@@ -93,6 +120,7 @@ const gameFlow = (function () {
                         e.target.textContent = playerArray[1].symbol;
                         turn = playerArray[0];
                     }
+                    turnAlert.textContent = `It is ${turn.name}'s turn`;
                     _determineWinner();
                 }
             } else {
@@ -128,10 +156,10 @@ const gameFlow = (function () {
                         if (player.symbol === gameArray[combination[0]]) {
                             winner = player;
                             if (winner.playerNum === 1) {
-                                resultText = "Player 1 is the winner!";
+                                resultText = `${playerArray[0].name} is the winner!`;
                                 finishToken = 1;
                             } else {
-                                resultText = "Player 2 is the winner!";
+                                resultText = `${playerArray[1].name} is the winner!`;
                                 finishToken = 1;
                             }
                             break search
@@ -159,9 +187,9 @@ const gameFlow = (function () {
         resetbutton.addEventListener('click', reset);
 
         function reset () {
-            console.log(playerArray);
             playerArray = [];
-            selectQuery.classList.remove('close');
+            form.classList.remove('close');
+            selectQuery.classList.add('close');
             playerList.classList.add('close');
             resetDiv.classList.add('close');
             alertdiv.classList.add('close');
@@ -172,8 +200,9 @@ const gameFlow = (function () {
     }) ();
 }) ();
 
-function Player (symbol, playerNum) {
+function Player (name, symbol, playerNum) {
     return {
+        name,
         symbol,
         playerNum
     }

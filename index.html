@@ -15,8 +15,23 @@
 
         </div>
         <div>
-            <div id="player-choice" class="open">
-                <span>Player 1 choose a symbol: </span>
+            <div id="player-form">
+                <form action="index.html">
+                    <div>
+                        <label for="player1">Player 1's Name:</label>
+                        <input id=player1 name="player1" type="text">
+                    </div>
+                    <div>
+                        <label for="player2">Player 2's Name:</label>
+                        <input id=player2 name="player2" type="text">
+                    </div>
+                    <div>
+                        <button type="submit" id="ok">OK</button>
+                    </div>
+                </form>
+            </div>
+            <div id="player-choice" class="close">
+                <span id="choice-text">Player 1 choose a symbol: </span>
                 <button class="gamebuts" id="x-button">X</button>
                 <span>or</span>
                 <button class="gamebuts" id="o-button">O</button>
